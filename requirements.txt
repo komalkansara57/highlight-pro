@@ -1,0 +1,4 @@
+Flask
+pymupdf
+requests
+gunicorn
