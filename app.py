@@ -95,11 +95,16 @@ def upload_file():
     report_body = ""
 
     for page_num, page in enumerate(doc):
-        annots = page.annots()
-        if not annots: continue
+        # 1. Get all annotations into a list
+        all_annots = list(page.annots())
+        if not all_annots: continue
+        
+        # 2. Sort them by top-to-bottom (y) then left-to-right (x)
+        # We use annot.rect.y0 for the top edge coordinate
+        all_annots.sort(key=lambda a: (a.rect.y0, a.rect.x0))
         
         page_entries = []
-        for annot in annots:
+        for annot in all_annots: # Now iterating through the sorted list
             # Type 8 is Highlight, Type 9 is Underline
             if annot.type[0] in [8, 9]: 
                 # Identify which one it is for styling
@@ -169,5 +174,4 @@ def upload_file():
     return send_file(output_path, as_attachment=True)
 
 if __name__ == '__main__':
-
     app.run(debug=True)
